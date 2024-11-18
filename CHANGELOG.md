@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - [Fix config export via UI #883](https://github.com/farmOS/farmOS/pull/883)
+- [Fix group location logic #888](https://github.com/farmOS/farmOS/pull/888)
 
 ### Security
 
