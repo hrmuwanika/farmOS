@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- [Update Drupal core to 10.4.0 #900](https://github.com/farmOS/farmOS/pull/900)
+
 ### Fixed
 
 - [Permissions page is blank #887](https://github.com/farmOS/farmOS/issues/887)
