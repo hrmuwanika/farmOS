@@ -291,6 +291,7 @@ Input Logs have the following additional attributes:
 Lab Test Logs have the following additional attributes:
 
 - Test type (string)
+- Soil texture (string)
 
 Lab Test Logs have the following additional relationships:
 
