@@ -1,6 +1,6 @@
 <?php
 
-namespace Druapl\tests\farm_login\Functional;
+namespace Drupal\tests\farm_login\Functional;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Tests\farm_api\Functional\OauthTestBase;
