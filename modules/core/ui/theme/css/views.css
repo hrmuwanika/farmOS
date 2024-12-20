@@ -60,7 +60,7 @@
 
 /* Specify gin variables for collapsible filter styles. */
 div.view-filters details > summary {
-  padding: var(--gin-spacing-m);
+  padding-block: var(--gin-spacing-s);
   font-weight: var(--gin-font-weight-semibold);
 }
 div.view-filters details > div {
