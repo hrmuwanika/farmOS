@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - [Update Drupal core to 10.4.0 #900](https://github.com/farmOS/farmOS/pull/900)
+- [Update to stable Gin 4.0.0 #903](https://github.com/farmOS/farmOS/pull/903)
 
 ### Fixed
 
