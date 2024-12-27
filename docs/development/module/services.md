@@ -4,6 +4,32 @@ farmOS provides some [services](https://symfony.com/doc/current/service_containe
 that encapsulate common logic like querying logs and getting an asset's current
 location. Some of these services are documented here.
 
+## Asset logs service
+
+**Service name**: `asset.logs`
+
+The asset logs service provides methods for retrieving logs that reference
+assets.
+
+**Methods**:
+
+`getLogs($asset, $log_type = NULL, $access_check = TRUE)` - Load a list of logs
+that reference an asset, optionally filtered by log type. Access checking is
+performed by default but can be optionally disabled. Returns a list of log
+entities.
+
+`getFirstLog($asset, $log_type = NULL, $access_check = TRUE)` - Load the first
+log that references an asset, optionally filtered by log type. Access checking
+is performed by default but can be optionally disabled. Returns a log entity, or
+`NULL` if no logs were found.
+
+**Example usage**:
+
+```php
+// Get all observation logs that reference an asset.
+$observation_logs = \Drupal::service('asset.logs')->getLogs($asset, 'observation');
+```
+
 ## Asset location service
 
 **Service name**: `asset.location`
@@ -21,19 +47,20 @@ controls are respected.
 
 `isFixed($asset)` - Check if an asset is fixed. Returns a boolean.
 
-`hasLocation($asset, $timestamp = NULL)` - Check if an asset is located within other
-location assets, optionally at a given timestamp (defaults to current time).
-Returns a boolean.
+`hasLocation($asset, $timestamp = NULL)` - Check if an asset is located within
+other location assets, optionally at a given timestamp (defaults to current
+time). Returns a boolean.
 
-`hasGeometry($asset, $timestamp = NULL)` - Check if an asset has geometry, optionally
-at a given timestamp (defaults to current time). Returns a boolean.
+`hasGeometry($asset, $timestamp = NULL)` - Check if an asset has geometry,
+optionally at a given timestamp (defaults to current time). Returns a boolean.
 
 `getLocation($asset, $timestamp = NULL)` - Get location assets that an asset is
 located within, optionally at a given timestamp (defaults to current time).
 Returns an array of asset entities.
 
-`getGeometry($asset, $timestamp = NULL)` - Get an asset's geometry, optionally at a
-given timestamp (defaults to current time). Returns a Well-Known Text string.
+`getGeometry($asset, $timestamp = NULL)` - Get an asset's geometry, optionally
+at a given timestamp (defaults to current time). Returns a Well-Known Text
+string.
 
 `getMovementLog($asset, $timestamp = NULL)` - Find the latest movement log that
 references an asset, optionally at a given timestamp (defaults to current
@@ -125,6 +152,8 @@ Both methods expect an array of field definition options. These include:
           decimal point). Defaults to 10.
         - `scale` (optional) - Number digits to the right of the decimal point.
           Defaults to 2.
+        - `min` (optional) - The minimum value.
+        - `max` (optional) - The maximum value.
     - `email` - Email field.
     - `entity_reference` - Reference other entities. Additional options:
         - `target_type` (required) - The entity type to reference (eg: `asset`,
@@ -153,6 +182,7 @@ Both methods expect an array of field definition options. These include:
     - `string_long` - Unformatted text field of unlimited length.
     - `text_long` - Formatted text field of unlimited length.
     - `timestamp` - Date and time.
+    - `uri` - Uniform Resource Identifier.
 - `label` - The field label.
 - `description` - The field description.
 - `required` - Whether the field is required.
@@ -182,12 +212,13 @@ access controls are respected.
 
 **Methods**:
 
-`hasGroup($asset, $timestamp = NULL)` - Check if an asset is a member of a group,
-optionally at a given timestamp (defaults to current time). Returns a boolean.
+`hasGroup($asset, $timestamp = NULL)` - Check if an asset is a member of a
+group, optionally at a given timestamp (defaults to current time). Returns a
+boolean.
 
-`getGroup($asset, $timestamp = NULL)` - Get group assets that an asset is a member
-of, optionally at a given timestamp (defaults to current time). Returns an
-array of asset entities.
+`getGroup($asset, $timestamp = NULL)` - Get group assets that an asset is a
+member of, optionally at a given timestamp (defaults to current time). Returns
+an array of asset entities.
 
 `getGroupAssignmentLog($asset, $timestamp = NULL)` - Find the latest group
 assignment log that references an asset, optionally at a given timestamp

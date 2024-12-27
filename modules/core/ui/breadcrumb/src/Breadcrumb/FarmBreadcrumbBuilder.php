@@ -2,6 +2,7 @@
 
 namespace Drupal\farm_ui_breadcrumb\Breadcrumb;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -17,7 +18,7 @@ class FarmBreadcrumbBuilder extends PathBasedBreadcrumbBuilder {
   /**
    * {@inheritdoc}
    */
-  public function applies(RouteMatchInterface $route_match) {
+  public function applies(RouteMatchInterface $route_match, ?CacheableMetadata $cacheable_metadata = NULL) {
     $routes = [
       'entity.asset.canonical',
       'entity.log.canonical',

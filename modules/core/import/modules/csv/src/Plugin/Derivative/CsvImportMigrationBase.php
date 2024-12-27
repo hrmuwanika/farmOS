@@ -256,6 +256,7 @@ abstract class CsvImportMigrationBase extends DeriverBase implements ContainerDe
     // as a first step and describe how to format values.
     if ($field_definition->getCardinality() === -1 || $field_definition->getCardinality() > 1) {
       array_unshift($process, ['plugin' => 'explode', 'delimiter' => ',']);
+      array_unshift($process, ['plugin' => 'skip_on_empty', 'method' => 'process']);
       $description[] = $this->t('Multiple values can be separated by commas with the whole cell wrapped in quotes.');
     }
 

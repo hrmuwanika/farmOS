@@ -2,9 +2,9 @@
 
 namespace Drupal\Tests\farm_birth\Kernel;
 
-use Drupal\asset\Entity\Asset;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\asset\Entity\Asset;
 use Drupal\log\Entity\Log;
 use Drupal\taxonomy\Entity\Term;
 
@@ -30,6 +30,7 @@ class BirthTest extends KernelTestBase {
     'farm_entity_views',
     'farm_field',
     'farm_id_tag',
+    'farm_log',
     'farm_log_asset',
     'farm_parent',
     'file',

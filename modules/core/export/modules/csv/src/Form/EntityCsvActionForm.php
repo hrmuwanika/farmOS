@@ -229,6 +229,65 @@ class EntityCsvActionForm extends ConfirmFormBase implements BaseFormIdInterface
       '#value' => $message,
     ];
 
+    // Determine which entity bundle(s) are represented.
+    $bundles = [];
+    foreach ($this->entities as $entity) {
+      if (!in_array($entity->bundle(), $bundles)) {
+        $bundles[] = $entity->bundle();
+      }
+    }
+
+    // If multiple bundles are included, mention that only shared (base field)
+    // columns will be included.
+    if (count($bundles) > 1) {
+      $message = $this->t('Exports that include multiple types of records will only include columns that are shared across all types. To include type-specific columns, limit the export to records of one type.');
+      $form['bundles_warning'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'strong',
+        '#value' => $message,
+      ];
+    }
+
+    // Allow columns to be selected for inclusion.
+    // If all records are the same bundle, then include bundle fields.
+    $bundle = count($bundles) === 1 ? reset($bundles) : NULL;
+    $column_options = $this->getIncludeColumns($bundle);
+    $form['columns'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Columns'),
+      '#tree' => TRUE,
+    ];
+    $form['columns']['include'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Include columns'),
+      '#description' => $this->t('Which columns should be included in the CSV?'),
+      '#options' => array_combine($column_options, $column_options),
+      '#default_value' => $column_options,
+      '#required' => TRUE,
+    ];
+
+    // Add a section for advanced options.
+    $form['advanced'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Advanced'),
+    ];
+
+    // Export unprocessed text.
+    $form['advanced']['processed_text'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Export processed text'),
+      '#description' => $this->t('Some long text fields can be passed through processing filters to remove disallowed HTML tags, convert line breaks into HTML, etc. This processing is disabled by default in CSV exports so that the raw user input is exported. Enable processing if you plan to embed CSV data directly in HTML documents.'),
+      '#default_value' => FALSE,
+    ];
+
+    // Sanitize against CSV formula injection.
+    $form['advanced']['sanitize'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Sanitize against formula injection'),
+      '#description' => $this->t('Prepend cells that start with @, =, +, or - characters with a tab to prevent them from being interpreted as a formula. <strong>Warning: Opening unsanitized CSV files with spreadsheet applications may expose you to <a href=":link">formula injection</a> or other security vulnerabilities.</strong>', [':link' => 'https://owasp.org/www-community/attacks/CSV_Injection']),
+      '#default_value' => TRUE,
+    ];
+
     // Delegate to the parent method.
     return parent::buildForm($form, $form_state);
   }
@@ -253,10 +312,11 @@ class EntityCsvActionForm extends ConfirmFormBase implements BaseFormIdInterface
     $context = [
 
       // Define the columns to include.
-      'include_columns' => $this->getIncludeColumns(),
+      'include_columns' => $form_state->getValue(['columns', 'include']),
 
-      // Return processed text from long text fields.
-      'processed_text' => TRUE,
+      // Return processed text, if desired. Otherwise, raw user input will be
+      // exported.
+      'processed_text' => $form_state->getValue('processed_text'),
 
       // Return content entity labels and config entity IDs.
       'content_entity_labels' => TRUE,
@@ -264,6 +324,12 @@ class EntityCsvActionForm extends ConfirmFormBase implements BaseFormIdInterface
 
       // Return RFC3339 dates.
       'rfc3339_dates' => TRUE,
+
+      // CSV encoder settings.
+      'csv_settings' => [
+        'sanitize' => $form_state->getValue('sanitize'),
+        'strip_tags' => FALSE,
+      ],
     ];
     $output = $this->serializer->serialize($accessible_entities, 'csv', $context);
 
@@ -319,10 +385,13 @@ class EntityCsvActionForm extends ConfirmFormBase implements BaseFormIdInterface
   /**
    * Get a list of columns to include in CSV exports.
    *
+   * @param string|null $bundle
+   *   If specified, columns that are specific to this bundle will be included.
+   *
    * @return string[]
    *   An array of column names.
    */
-  protected function getIncludeColumns() {
+  protected function getIncludeColumns(?string $bundle = NULL) {
 
     // Start with ID and UUID.
     $columns = [
@@ -336,6 +405,7 @@ class EntityCsvActionForm extends ConfirmFormBase implements BaseFormIdInterface
       'created',
       'changed',
       'entity_reference',
+      'fraction',
       'list_string',
       'state',
       'string',
@@ -352,10 +422,9 @@ class EntityCsvActionForm extends ConfirmFormBase implements BaseFormIdInterface
     }
 
     // Add bundle fields for supported field types.
-    $bundles = $this->entityTypeManager->getStorage($this->entityType->getBundleEntityType())->loadMultiple();
-    foreach ($bundles as $bundle) {
+    if ($bundle) {
       if ($this->entityTypeManager->hasHandler($this->entityType->id(), 'bundle_plugin')) {
-        $bundle_fields = $this->entityTypeManager->getHandler($this->entityType->id(), 'bundle_plugin')->getFieldDefinitions($bundle->id());
+        $bundle_fields = $this->entityTypeManager->getHandler($this->entityType->id(), 'bundle_plugin')->getFieldDefinitions($bundle);
         foreach ($bundle_fields as $field_name => $field_definition) {
           if (!in_array($field_name, $columns) && in_array($field_definition->getType(), $supported_field_types)) {
             $columns[] = $field_name;
@@ -370,6 +439,7 @@ class EntityCsvActionForm extends ConfirmFormBase implements BaseFormIdInterface
       'revision_translation_affected',
       'revision_created',
       'revision_user',
+      'revision_default',
     ];
     $columns = array_filter($columns, function ($name) use ($remove_columns) {
       return !in_array($name, $remove_columns);

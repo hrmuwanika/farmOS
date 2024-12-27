@@ -2,10 +2,10 @@
 
 namespace Drupal\Tests\farm_api\Functional;
 
-use Drupal\consumers\Entity\Consumer;
 use Drupal\Core\Url;
 use Drupal\Tests\farm_test\Functional\FarmBrowserTestBase;
 use Drupal\Tests\jsonapi\Functional\JsonApiRequestTestTrait;
+use Drupal\consumers\Entity\Consumer;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 
@@ -100,7 +100,7 @@ class CorsResponseEventSubscriberTest extends FarmBrowserTestBase {
    *   An optional origin to check. If NULL, then the request should have no
    *   CORS headers.
    */
-  protected function assertValidCorsHeaders(ResponseInterface $response, string $origin = NULL) {
+  protected function assertValidCorsHeaders(ResponseInterface $response, ?string $origin = NULL) {
 
     // Cors headers to test.
     $cors_headers = [

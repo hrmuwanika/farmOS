@@ -2,11 +2,11 @@
 
 namespace Drupal\Tests\farm_sensor\Functional;
 
-use Drupal\asset\Entity\Asset;
-use Drupal\asset\Entity\AssetInterface;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Url;
 use Drupal\Tests\farm_test\Functional\FarmBrowserTestBase;
+use Drupal\asset\Entity\Asset;
+use Drupal\asset\Entity\AssetInterface;
 use GuzzleHttp\RequestOptions;
 
 /**
@@ -44,9 +44,17 @@ class SensorDataApiTest extends FarmBrowserTestBase {
   }
 
   /**
+   * Run all tests.
+   */
+  public function testAll() {
+    $this->doTestApiGet();
+    $this->doTestApiPost();
+  }
+
+  /**
    * Test API GET requests.
    */
-  public function testApiGet() {
+  public function doTestApiGet() {
 
     // Build the path.
     $uri = $this->buildPath($this->asset);
@@ -82,7 +90,7 @@ class SensorDataApiTest extends FarmBrowserTestBase {
   /**
    * Test API POST requests.
    */
-  public function testApiPost() {
+  public function doTestApiPost() {
 
     // Build the path.
     $uri = $this->buildPath($this->asset);

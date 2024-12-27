@@ -2,7 +2,6 @@
 
 namespace Drupal\farm_ui_location\Form;
 
-use Drupal\asset\Entity\AssetInterface;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -10,6 +9,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\asset\Entity\AssetInterface;
 use Drupal\farm_location\AssetLocationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -75,7 +75,7 @@ class LocationHierarchyForm extends FormBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function access(AccountInterface $account, AssetInterface $asset = NULL) {
+  public function access(AccountInterface $account, ?AssetInterface $asset = NULL) {
 
     // If the asset is not a location, forbid access.
     if (!$this->assetLocation->isLocation($asset)) {
@@ -100,7 +100,7 @@ class LocationHierarchyForm extends FormBase {
    * @return string
    *   Returns the translated page title.
    */
-  public function getTitle(AssetInterface $asset = NULL) {
+  public function getTitle(?AssetInterface $asset = NULL) {
     if (!empty($asset)) {
       return $this->t('Locations in %location', ['%location' => $asset->label()]);
     }
@@ -110,7 +110,7 @@ class LocationHierarchyForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, AssetInterface $asset = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?AssetInterface $asset = NULL) {
 
     // If no asset was specified, show a map of all locations.
     if (is_null($asset)) {
@@ -196,7 +196,7 @@ class LocationHierarchyForm extends FormBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function buildTree(AssetInterface $asset = NULL) {
+  protected function buildTree(?AssetInterface $asset = NULL) {
     $locations = $this->getLocations($asset);
     $tree = [];
     if ($locations) {
@@ -226,7 +226,7 @@ class LocationHierarchyForm extends FormBase {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getLocations(AssetInterface $asset = NULL) {
+  protected function getLocations(?AssetInterface $asset = NULL) {
 
     // Query unarchived location assets.
     $storage = $this->entityTypeManager->getStorage('asset');

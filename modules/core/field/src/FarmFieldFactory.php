@@ -6,6 +6,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldException;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\entity\BundleFieldDefinition;
+use Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormComplex;
 
 /**
  * Factory for generating farmOS field definitions.
@@ -174,6 +175,10 @@ class FarmFieldFactory implements FarmFieldFactoryInterface {
         $this->modifyTimestampField($field, $options);
         break;
 
+      case 'uri':
+        $this->modifyUriField($field, $options);
+        break;
+
       default:
         throw new FieldException('Unsupported field type.');
 
@@ -258,6 +263,14 @@ class FarmFieldFactory implements FarmFieldFactoryInterface {
     }
     if (!empty($options['scale'])) {
       $field->setSetting('scale', $options['scale']);
+    }
+
+    // Set the min/max constraints, if specified.
+    if (isset($options['min'])) {
+      $field->setSetting('min', $options['min']);
+    }
+    if (isset($options['max'])) {
+      $field->setSetting('max', $options['max']);
     }
 
     // Build form and view display settings.
@@ -479,6 +492,7 @@ class FarmFieldFactory implements FarmFieldFactoryInterface {
             'allow_existing' => FALSE,
             'match_operator' => 'CONTAINS',
             'allow_duplicate' => FALSE,
+            'removed_reference' => InlineEntityFormComplex::REMOVED_DELETE,
           ],
           'weight' => $options['weight']['form'] ?? 0,
         ];
@@ -553,6 +567,7 @@ class FarmFieldFactory implements FarmFieldFactoryInterface {
             'allow_existing' => FALSE,
             'match_operator' => 'CONTAINS',
             'allow_duplicate' => FALSE,
+            'removed_reference' => InlineEntityFormComplex::REMOVED_KEEP,
           ],
           'weight' => $options['weight']['form'] ?? 0,
         ];
@@ -644,7 +659,7 @@ class FarmFieldFactory implements FarmFieldFactoryInterface {
         ];
         $view_display_options = [
           'type' => 'file_table',
-          'label' => 'visually_hidden',
+          'label' => 'above',
           'settings' => [
             'use_description_as_link_text' => TRUE,
           ],
@@ -663,7 +678,7 @@ class FarmFieldFactory implements FarmFieldFactoryInterface {
         ];
         $view_display_options = [
           'type' => 'image',
-          'label' => 'visually_hidden',
+          'label' => 'above',
           'settings' => [
             'image_style' => 'large',
             'image_link' => 'file',
@@ -933,6 +948,35 @@ class FarmFieldFactory implements FarmFieldFactoryInterface {
       ],
       'weight' => $options['weight']['view'] ?? 0,
     ]);
+  }
+
+  /**
+   * URI field modifier.
+   *
+   * @param \Drupal\Core\Field\BaseFieldDefinition &$field
+   *   A base field definition object.
+   * @param array $options
+   *   An array of options.
+   */
+  protected function modifyUriField(BaseFieldDefinition &$field, array $options = []) {
+
+    // Build form and view display settings.
+    $field->setDisplayOptions('form', [
+      'type' => 'uri_string',
+      'settings' => [
+        'size' => 60,
+        'placeholder' => '',
+      ],
+      'weight' => $options['weight']['form'] ?? 0,
+    ]);
+    $field->setDisplayOptions('view', [
+      'label' => 'inline',
+      'type' => 'url_link',
+      'weight' => $options['weight']['view'] ?? 0,
+    ]);
+
+    // Add URI validation constraint.
+    $field->addConstraint('Uri');
   }
 
 }

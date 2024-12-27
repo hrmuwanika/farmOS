@@ -2,13 +2,13 @@
 
 namespace Drupal\farm_ui_action\Plugin\Menu\LocalAction;
 
-use Drupal\asset\Entity\AssetInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Menu\LocalActionDefault;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\asset\Entity\AssetInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -64,7 +64,7 @@ class AddEntity extends LocalActionDefault {
   /**
    * {@inheritdoc}
    */
-  public function getTitle(Request $request = NULL) {
+  public function getTitle(?Request $request = NULL) {
 
     // Get the entity type.
     $entity_type = $this->entityTypeManager->getDefinition($this->pluginDefinition['entity_type']);

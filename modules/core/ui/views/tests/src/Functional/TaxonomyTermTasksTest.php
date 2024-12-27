@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\farm_ui_views\Functional;
 
-use Drupal\asset\Entity\Asset;
 use Drupal\Tests\farm_test\Functional\FarmBrowserTestBase;
+use Drupal\asset\Entity\Asset;
 
 /**
  * Tests the farm_ui_views taxonomy views routes.
@@ -88,9 +88,17 @@ class TaxonomyTermTasksTest extends FarmBrowserTestBase {
   }
 
   /**
+   * Run all tests.
+   */
+  public function testAll() {
+    $this->doTestTaxonomyTermAssetTaskTabsAppear();
+    $this->doTestTaxonomyTermAssetViews();
+  }
+
+  /**
    * Test that the asset view task links appear on taxonomy term pages.
    */
-  public function testTaxonomyTermAssetTaskTabsAppear() {
+  public function doTestTaxonomyTermAssetTaskTabsAppear() {
     $fava_term_url = 'taxonomy/term/' . $this->favaPlantType->id();
 
     $this->drupalGet($fava_term_url);
@@ -123,7 +131,7 @@ class TaxonomyTermTasksTest extends FarmBrowserTestBase {
 
     $this->assertCount(3, $secondary_tab_links, 'Only 3 secondary tabs appear.');
 
-    $assert_has_link($secondary_tab_links, "/$fava_term_url/assets", 'All(active tab)');
+    $assert_has_link($secondary_tab_links, "/$fava_term_url/assets", 'All');
     $assert_has_link($secondary_tab_links, "/$fava_term_url/assets/plant", 'Plant');
     $assert_has_link($secondary_tab_links, "/$fava_term_url/assets/seed", 'Seed');
   }
@@ -131,7 +139,7 @@ class TaxonomyTermTasksTest extends FarmBrowserTestBase {
   /**
    * Test that the views of assets for terms show the correct assets.
    */
-  public function testTaxonomyTermAssetViews() {
+  public function doTestTaxonomyTermAssetViews() {
     $fava_term_url = 'taxonomy/term/' . $this->favaPlantType->id();
 
     $this->drupalGet("$fava_term_url/assets/all");

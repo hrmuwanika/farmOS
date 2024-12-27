@@ -28,6 +28,14 @@ class EntryPointTest extends FarmBrowserTestBase {
   ];
 
   /**
+   * Run all tests.
+   */
+  public function testAll() {
+    $this->doTestEntryPoint();
+    $this->doTestFarmMeta();
+  }
+
+  /**
    * Test GET to the entry point.
    *
    * We extend the core JSONAPI EntryPoint controller to include a 'meta' key
@@ -41,12 +49,13 @@ class EntryPointTest extends FarmBrowserTestBase {
    *
    * @see \Drupal\Tests\jsonapi\Functional\EntryPointTest
    */
-  public function testEntryPoint() {
+  public function doTestEntryPoint() {
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $response = $this->request('GET', Url::fromUri('base://api'), $request_options);
     $document = Json::decode((string) $response->getBody());
     $expected_cache_contexts = [
+      'url.query_args',
       'url.site',
       'user.roles:authenticated',
     ];
@@ -73,7 +82,7 @@ class EntryPointTest extends FarmBrowserTestBase {
   /**
    * Test that the meta.farm data is correct.
    */
-  public function testFarmMeta() {
+  public function doTestFarmMeta() {
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $response = $this->request('GET', Url::fromUri('base://api'), $request_options);

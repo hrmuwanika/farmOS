@@ -15,7 +15,7 @@ use Drupal\views\Views;
 function farm_ui_views_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
 
   // We only want to alter the Views we provide.
-  if (!in_array($view->id(), ['farm_asset', 'farm_log', 'farm_plan', 'farm_quantity'])) {
+  if (!in_array($view->id(), ['farm_asset', 'farm_log', 'farm_log_quantity', 'farm_plan'])) {
     return;
   }
 
@@ -27,50 +27,12 @@ function farm_ui_views_views_pre_view(ViewExecutable $view, $display_id, array &
     $view->removeHandler($display_id, 'field', 'type');
     $view->removeHandler($display_id, 'filter', 'type');
 
-    // Add the type to exposed filters.
-    // This ensures the "Export CSV" link includes a type filter.
-    $exposed_input = $view->getExposedInput();
-    $exposed_input['type'] = [$bundle];
-    $view->setExposedInput($exposed_input);
-
     // If the entity type has a bundle_plugin manager, add all of its
     // bundle fields and filters to the page_type view.
     if (\Drupal::entityTypeManager()->hasHandler($view->getBaseEntityType()->id(), 'bundle_plugin')) {
       farm_ui_views_add_bundle_handlers($view, $display_id, $bundle, 'field');
       farm_ui_views_add_bundle_handlers($view, $display_id, $bundle, 'filter');
     }
-  }
-
-  // If this is an asset/log/quantity "CSV export" display with a single type
-  // filter applied, alter fields and filters to match the "By type" display.
-  if (in_array($view->id(), ['farm_asset', 'farm_log', 'farm_quantity']) && $display_id == 'csv') {
-
-    // Determine the bundle from the "type" exposed input filter.
-    // The input may be a string or an array depending on if the exposed filter
-    // allows multiple selections.
-    $bundle = NULL;
-    $exposed_input = $view->getExposedInput();
-    if (isset($exposed_input['type'])) {
-      if (is_string($exposed_input['type']) && $exposed_input['type'] != 'All') {
-        $bundle = $exposed_input['type'];
-      }
-      elseif (is_array($exposed_input['type']) && count($exposed_input['type']) == 1) {
-        $bundle = $exposed_input['type'][0];
-      }
-    }
-
-    // If the entity type has a bundle_plugin manager, add all of its
-    // bundle fields and filters to the page_type view.
-    if ($bundle && \Drupal::entityTypeManager()->hasHandler($view->getBaseEntityType()->id(), 'bundle_plugin')) {
-      farm_ui_views_add_bundle_handlers($view, $display_id, $bundle, 'field');
-      farm_ui_views_add_bundle_handlers($view, $display_id, $bundle, 'filter');
-    }
-  }
-
-  // If this is a log "CSV export" display, set the Quantity view mode to
-  // "Plain text" to strip out tags and whitespace.
-  if ($view->id() == 'farm_log' && $display_id == 'csv') {
-    $view->setHandlerOption('csv', 'field', 'quantity_target_id', 'settings', ['view_mode' => 'plain_text']);
   }
 
   // Remove the asset and location filters from the log page_asset display.
@@ -104,7 +66,7 @@ function farm_ui_views_views_pre_view(ViewExecutable $view, $display_id, array &
 function farm_ui_views_views_pre_render(ViewExecutable $view) {
 
   // We only want to alter the Views we provide.
-  if (!in_array($view->id(), ['farm_asset', 'farm_log', 'farm_plan', 'farm_quantity'])) {
+  if (!in_array($view->id(), ['farm_asset', 'farm_log', 'farm_log_quantity', 'farm_plan'])) {
     return;
   }
 
@@ -379,8 +341,8 @@ function farm_ui_views_add_bundle_handlers(ViewExecutable $view, string $display
               $handler = $field_definition->getSetting('handler');
               $handler_settings = $field_definition->getSetting('handler_settings');
               if ($handler === 'views' || !empty($handler_settings['target_bundles'])) {
-                $filter_options['handler'] = $handler;
-                $filter_options['handler_settings'] = $handler_settings;
+                $filter_options['sub_handler'] = $handler;
+                $filter_options['sub_handler_settings'] = $handler_settings;
               }
             }
 

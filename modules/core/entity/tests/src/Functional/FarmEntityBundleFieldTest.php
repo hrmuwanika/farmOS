@@ -60,9 +60,63 @@ class FarmEntityBundleFieldTest extends FarmBrowserTestBase {
   }
 
   /**
+   * Run all tests.
+   */
+  public function testAll() {
+    $this->doTestBundleFieldMapUpdates();
+    $this->doTestBundleFieldPostponedInstall();
+    $this->doTestBundlePluginModuleUninstallation();
+  }
+
+  /**
+   * Test that bundle field maps are updated on install/uninstall.
+   */
+  public function doTestBundleFieldMapUpdates() {
+
+    // Get the entity field map.
+    $field_map = $this->entityFieldManager->getFieldMap();
+
+    // Confirm that the 'test_default_bundle_field' exists in the log field map.
+    $this->assertArrayHasKey('test_default_bundle_field', $field_map['log']);
+
+    // Confirm that the 'test_contrib_hook_bundle_field' does NOT exist (yet).
+    $this->assertArrayNotHasKey('test_contrib_hook_bundle_field', $field_map['log']);
+
+    // Install the farm_entity_contrib_test module.
+    $result = $this->moduleInstaller->install(['farm_entity_contrib_test']);
+    $this->assertTrue($result);
+
+    // Reload the entity field map. We need to get a new instance of the
+    // entity_field.manager service from the container without old state.
+    $this->container->set('entity_field.manager', NULL);
+    $this->entityFieldManager = $this->container->get('entity_field.manager');
+    $field_map = $this->entityFieldManager->getFieldMap();
+
+    // Confirm that the 'test_contrib_hook_bundle_field' exists in the log field
+    // map, and exists in the 'test' bundle, but not in 'test_override'.
+    $this->assertArrayHasKey('test_contrib_hook_bundle_field', $field_map['log']);
+    $this->assertContains('test', $field_map['log']['test_contrib_hook_bundle_field']['bundles']);
+    $this->assertNotContains('test_override', $field_map['log']['test_contrib_hook_bundle_field']['bundles']);
+
+    // Uninstall the farm_entity_contrib_test module.
+    $result = $this->moduleInstaller->uninstall(['farm_entity_contrib_test']);
+    $this->assertTrue($result);
+
+    // Reload the entity field map. We need to get a new instance of the
+    // entity_field.manager service from the container without old state.
+    $this->container->set('entity_field.manager', NULL);
+    $this->entityFieldManager = $this->container->get('entity_field.manager');
+    $field_map = $this->entityFieldManager->getFieldMap();
+
+    // Confirm that the 'test_contrib_hook_bundle_field' no longer exists in the
+    // log field map.
+    $this->assertArrayNotHasKey('test_contrib_hook_bundle_field', $field_map['log']);
+  }
+
+  /**
    * Test installing the farm_entity_contrib_test module after farm_entity_test.
    */
-  public function testBundleFieldPostponedInstall() {
+  public function doTestBundleFieldPostponedInstall() {
 
     // Install the farm_entity_contrib_test module.
     $result = $this->moduleInstaller->install(['farm_entity_contrib_test'], TRUE);
@@ -105,7 +159,7 @@ class FarmEntityBundleFieldTest extends FarmBrowserTestBase {
   /**
    * Test that bundle fields can be reused across bundles.
    */
-  public function testBundlePluginModuleUninstallation() {
+  public function doTestBundlePluginModuleUninstallation() {
 
     // Test that database tables exist after uninstalling a bundle with
     // a field storage definition used by other bundles.

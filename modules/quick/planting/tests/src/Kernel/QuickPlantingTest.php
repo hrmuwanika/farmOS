@@ -2,9 +2,9 @@
 
 namespace Drupal\Tests\farm_quick_planting\Kernel;
 
+use Drupal\Tests\farm_quick\Kernel\QuickFormTestBase;
 use Drupal\asset\Entity\Asset;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\Tests\farm_quick\Kernel\QuickFormTestBase;
 
 /**
  * Tests for farmOS planting quick form.
@@ -24,6 +24,7 @@ class QuickPlantingTest extends QuickFormTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
+    'entity_reference_validators',
     'farm_harvest',
     'farm_land',
     'farm_plant',
@@ -34,6 +35,7 @@ class QuickPlantingTest extends QuickFormTestBase {
     'farm_seeding',
     'farm_transplanting',
     'farm_unit',
+    'field',
   ];
 
   /**
@@ -45,6 +47,7 @@ class QuickPlantingTest extends QuickFormTestBase {
       'farm_harvest',
       'farm_land',
       'farm_plant',
+      'farm_plant_type',
       'farm_quantity_standard',
       'farm_seeding',
       'farm_transplanting',
@@ -193,7 +196,9 @@ class QuickPlantingTest extends QuickFormTestBase {
           'date' => '2022-05-15',
           'time' => '00:00:00',
         ],
-        'location' => $land1->label(),
+        'location' => [
+          ['target_id' => $land1->id()],
+        ],
         'quantity' => [
           'measure' => 'weight',
           'value' => '10.01',
@@ -248,7 +253,9 @@ class QuickPlantingTest extends QuickFormTestBase {
           'date' => '2022-05-15',
           'time' => '00:00:00',
         ],
-        'location' => $land1->label(),
+        'location' => [
+          ['target_id' => $land1->id()],
+        ],
         'notes' => [],
         'done' => TRUE,
       ],
@@ -258,7 +265,9 @@ class QuickPlantingTest extends QuickFormTestBase {
           'date' => '2022-06-15',
           'time' => '00:00:00',
         ],
-        'location' => $land2->label(),
+        'location' => [
+          ['target_id' => $land2->id()],
+        ],
         'notes' => [],
         'done' => FALSE,
       ],
@@ -288,6 +297,36 @@ class QuickPlantingTest extends QuickFormTestBase {
     $this->assertEquals('pending', $log->get('status')->value);
     $log = $logs[4];
     $this->assertEquals('pending', $log->get('status')->value);
+
+    // Test referencing multiple locations.
+    $this->submitQuickForm([
+      'seasons' => [['target_id' => $season->id()]],
+      'crops' => [[['target_id' => $crop->id()]]],
+      'crop_count' => 1,
+      'log_types' => [
+        'seeding' => 'seeding',
+      ],
+      'seeding' => [
+        'type' => 'seeding',
+        'date' => [
+          'date' => '2022-05-15',
+          'time' => '00:00:00',
+        ],
+        'location' => [
+          ['target_id' => $land1->id()],
+          ['target_id' => $land2->id()],
+        ],
+        'notes' => [],
+        'done' => TRUE,
+      ],
+    ]);
+
+    // Confirm that another log was created and it references both locations.
+    $logs = $this->logStorage->loadMultiple();
+    $this->assertCount(5, $logs);
+    $log = $logs[5];
+    $this->assertEquals($land1->id(), $log->get('location')->referencedEntities()[0]->id());
+    $this->assertEquals($land2->id(), $log->get('location')->referencedEntities()[1]->id());
   }
 
 }

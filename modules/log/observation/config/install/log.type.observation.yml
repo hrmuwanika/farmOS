@@ -1,6 +1,8 @@
 langcode: en
 status: true
 dependencies:
+  module:
+    - farm_log
   enforced:
     module:
       - farm_observation
@@ -8,5 +10,5 @@ id: observation
 label: Observation
 description: ''
 name_pattern: 'Observation log [log:id]'
-workflow: log_default
+workflow: farm_log_workflow
 new_revision: true

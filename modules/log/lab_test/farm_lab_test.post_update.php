@@ -176,3 +176,36 @@ function farm_lab_test_post_update_add_tissue_type(&$sandbox) {
   ]);
   $type->save();
 }
+
+/**
+ * Override the lab_test log timestamp label and description.
+ */
+function farm_lab_test_post_update_override_lab_test_timestamp_label_description(&$sandbox) {
+
+  // Override the timestamp field label and description on lab_test logs to
+  // make it clear that it should be used for the date the sample was taken.
+  // This also checks to make sure they haven't been overridden already first.
+  /** @var \Drupal\Core\Field\Entity\BaseFieldOverride $config */
+  $config = \Drupal::service('entity_field.manager')->getBaseFieldDefinitions('log')['timestamp']->getConfig('lab_test');
+  if ($config->isNew()) {
+    $config->set('label', 'Date sampled');
+    $config->set('description', 'The date when the sample was collected.');
+    $config->save();
+  }
+}
+
+/**
+ * Add "Soil texture" field to lab test logs.
+ */
+function farm_lab_test_post_update_soil_texture(&$sandbox) {
+  $options = [
+    'type' => 'string',
+    'label' => t('Soil texture'),
+    'weight' => [
+      'form' => -45,
+      'view' => -45,
+    ],
+  ];
+  $field_definition = \Drupal::service('farm_field.factory')->bundleFieldDefinition($options);
+  \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('soil_texture', 'log', 'farm_lab_test', $field_definition);
+}

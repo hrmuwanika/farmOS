@@ -9,7 +9,136 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- [Update Drupal core to 10.4.0 #900](https://github.com/farmOS/farmOS/pull/900)
+- [Update to stable Gin 4.0.0 #903](https://github.com/farmOS/farmOS/pull/903)
+- [Update simple_oauth to 6.0.0-beta7 #893](https://github.com/farmOS/farmOS/pull/`893`)
+
+### Fixed
+
+- [Permissions page is blank #887](https://github.com/farmOS/farmOS/issues/887)
+
+## [3.3.2] 2024-11-20
+
+### Fixed
+
+- [Fix config export via UI #883](https://github.com/farmOS/farmOS/pull/883)
+- [Fix group location logic #888](https://github.com/farmOS/farmOS/pull/888)
+- [Fix farm_log_quantity View alterations by farm_ui_views #891](https://github.com/farmOS/farmOS/pull/891)
+- [Fix "explode: NULL is not a string" when multi-value CSV columns are omitted #895](https://github.com/farmOS/farmOS/pull/895)
+
+### Security
+
+- [Update Drupal core to 10.3.9 #892](https://github.com/farmOS/farmOS/pull/892)
+
+## [3.3.1] 2024-09-26
+
+This fixes a critical issue in the upgrade path from farmOS 3.2.x to 3.3.x. For
+more information, see https://github.com/farmOS/farmOS/pull/881.
+
+### Changed
+
+- [Do not delete quantities when they are removed from a log #882](https://github.com/farmOS/farmOS/pull/882)
+
+### Fixed
+
+- [Remove dependency on admin_toolbar:admin_toolbar_links_access_filter #881](https://github.com/farmOS/farmOS/pull/881)
+- [Fix warning message when loading values from empty form state #880](https://github.com/farmOS/farmOS/pull/880)
+
+## [3.3.0] 2024-09-24
+
+### Added
+
+- [Add bulk delete action to farm_log_quantity View #860](https://github.com/farmOS/farmOS/pull/860)
+- [Add an "Export Quantity CSV" bulk action to Log Views](https://github.com/farmOS/farmOS/pull/861)
+- [Allow modules to alter dashboard panes #868](https://github.com/farmOS/farmOS/pull/868)
+- [Add geometry/location fields to CSV importers #815](https://github.com/farmOS/farmOS/pull/815)
+- [Add an asset.logs service for retrieving logs that reference an asset #850](https://github.com/farmOS/farmOS/pull/850)
+- [Add farmOS-timeline library (experimental) #862](https://github.com/farmOS/farmOS/pull/862)
+- [Build multi-platform Docker images/manifests #864](https://github.com/farmOS/farmOS/pull/864)
+- [Add a Soil texture field to Lab test logs #873](https://github.com/farmOS/farmOS/pull/873)
+
+### Changed
+
+- [Update Drupal core to 10.3 #872](https://github.com/farmOS/farmOS/pull/872)
+- [Move farm_quantity View to farm_log_quantities and require log relationship #858](https://github.com/farmOS/farmOS/pull/858)
+- [Quantity CSV export improvements #861](https://github.com/farmOS/farmOS/pull/861)
+- [Reorder and improve entity field rendering #847](https://github.com/farmOS/farmOS/pull/847)
+
+### Security
+
+- [Sanitize CSV exports against formula injection #871](https://github.com/farmOS/farmOS/pull/871)
+
+## [3.2.4] 2024-09-18
+
+### Changed
+
+- [Single Dockerfile using multi-stages for production and dev image #855](https://github.com/farmOS/farmOS/pull/855)
+- [Simplify recommendation for XDEBUG_CONFIG in local development environments #870](https://github.com/farmOS/farmOS/pull/870)
+
+### Fixed
+
+- [Update drupal/consumers to ^1.19 and fix kernel API tests](https://github.com/farmOS/farmOS/pull/857)
+- [When a quantity is deleted, clean up log references to it #859](https://github.com/farmOS/farmOS/pull/859)
+
+## [3.2.3] 2024-07-21
+
+### Fixed
+
+- [Issue #3454144: Fix untranslated plant_type descriptions in plant and seed asset types](https://www.drupal.org/project/farm/issues/3454144)
+- [Set owner of cloned assets to current user #851](https://github.com/farmOS/farmOS/pull/851)
+- [Issue #3314741: EntityFieldManager::getFieldMap() doesn't show farmOS bundle fields](https://www.drupal.org/project/farm/issues/3314741)
+
+## [3.2.2] 2024-05-17
+
+### Added
+
+- [Allow columns to be selected for inclusion in CSV exports #842](https://github.com/farmOS/farmOS/pull/842)
+
+### Changed
+
+- [Allow multiple locations to be referenced in the planting quick form #839](https://github.com/farmOS/farmOS/pull/839)
+- [Update farmOS-map to v2.3.0 #841](https://github.com/farmOS/farmOS/pull/841) to [add the ability to use custom stroke colors #201](https://github.com/farmOS/farmOS-map/issues/201) (in custom map layers)
+- [Improve comment settings and edit sidebar #846](https://github.com/farmOS/farmOS/pull/846)
+
+### Removed
+
+- [Remove default country from farm settings form #840](https://github.com/farmOS/farmOS/pull/840)
+
+### Fixed
+
+- [Remove data_table from existing plan_record entity type definition #829](https://github.com/farmOS/farmOS/pull/829)
+- [Use farm_people entity_reference View for exposed Owner filter in farm_asset View #835](https://github.com/farmOS/farmOS/pull/835)
+- [Require asset name in bulk KML importer #836](https://github.com/farmOS/farmOS/pull/836)
+- [Fix incorrect CSV headers when exporting multiple record types #842](https://github.com/farmOS/farmOS/pull/842)
+
+## [3.2.1] 2024-04-12
+
+### Fixed
+
+- Patch JSON:API Schema to fix [Issue #3390505: Error: uri is not a valid type for a JSON document](https://www.drupal.org/project/jsonapi_schema/issues/3390505)
+- [Fix FieldException: Attempted to create a configurable field of non-configurable field storage image during update.php #828](https://github.com/farmOS/farmOS/pull/828)
+
+## [3.2.0] 2024-04-10
+
+### Added
+
+- [Issue #3352183: Comments on farmOS records](https://www.drupal.org/project/farm/issues/3352183)
+- [Add a Notes filter to the logs views #825](https://github.com/farmOS/farmOS/pull/825)
+- [Add file and image base fields to all taxonomy terms #807](https://github.com/farmOS/farmOS/pull/807)
+- [Issue #3390486: Add an Ontology URI field to all taxonomy terms](https://www.drupal.org/project/farm/issues/3390486)
+- [Add "Days of harvest" field to Plant type terms #794](https://github.com/farmOS/farmOS/pull/794)
+- [Plan record views integration #818](https://github.com/farmOS/farmOS/pull/818)
+- [Add min/max options to decimal fields in farm_field.factory #822](https://github.com/farmOS/farmOS/pull/822)
+
+### Changed
+
 - [Set plant_type fields form/view display settings via alter hook instead of config #806](https://github.com/farmOS/farmOS/pull/806)
+- [Make "done" the default log status #782](https://github.com/farmOS/farmOS/pull/782)
+- [Set the minimum value of maturity_days and transplant_days to 1 #794](https://github.com/farmOS/farmOS/pull/794)
+- [Move transplant_days field to farm_transplant module #795](https://github.com/farmOS/farmOS/pull/795)
+- [Use content form for taxonomy terms #810](https://github.com/farmOS/farmOS/pull/810)
+- [Override the lab_test log timestamp label and description #774](https://github.com/farmOS/farmOS/pull/774)
+- [Override the birth log asset label and description #824](https://github.com/farmOS/farmOS/pull/824)
 
 ### Fixed
 
@@ -17,6 +146,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Update patch for Issue #3397275 to fix boolean field JSON Schema #819](https://github.com/farmOS/farmOS/pull/819)
 - [Do not trim whitespace from quantity field item content #820](https://github.com/farmOS/farmOS/pull/820)
 - [Do not install base modules when --existing-config is used #821](https://github.com/farmOS/farmOS/pull/821)
+
+### Removed
+
+- [Remove CSV export display from farm_plan View #809](https://github.com/farmOS/farmOS/pull/809)
 
 ## [3.1.2] 2024-02-26
 
@@ -726,7 +859,15 @@ moving forward.
     Drupal 7, which required a complete refactor of the codebase. By comparison,
     updating from Drupal 9 to 10 will simply involve updating deprecated code.
 
-[Unreleased]: https://github.com/farmOS/farmOS/compare/3.1.2...HEAD
+[Unreleased]: https://github.com/farmOS/farmOS/compare/3.3.2..HEAD
+[3.3.2]: https://github.com/farmOS/farmOS/releases/tag/3.3.2
+[3.3.1]: https://github.com/farmOS/farmOS/releases/tag/3.3.1
+[3.3.0]: https://github.com/farmOS/farmOS/releases/tag/3.3.0
+[3.2.4]: https://github.com/farmOS/farmOS/releases/tag/3.2.4
+[3.2.3]: https://github.com/farmOS/farmOS/releases/tag/3.2.3
+[3.2.2]: https://github.com/farmOS/farmOS/releases/tag/3.2.2
+[3.2.1]: https://github.com/farmOS/farmOS/releases/tag/3.2.1
+[3.2.0]: https://github.com/farmOS/farmOS/releases/tag/3.2.0
 [3.1.2]: https://github.com/farmOS/farmOS/releases/tag/3.1.2
 [3.1.1]: https://github.com/farmOS/farmOS/releases/tag/3.1.1
 [3.1.0]: https://github.com/farmOS/farmOS/releases/tag/3.1.0

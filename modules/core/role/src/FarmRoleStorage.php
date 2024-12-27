@@ -67,6 +67,11 @@ class FarmRoleStorage extends RoleStorage {
    */
   public function isPermissionInRoles($permission, array $rids) {
 
+    // @todo Refactor if/when simple_oauth stops using this.
+    // This is currently only used by simple_oauth module's Oauth2ScopeProvider,
+    // since Drupal core stopped using RoleStorage::isPermissionInRoles() in
+    // https://www.drupal.org/project/drupal/issues/3376846.
+
     // Check if the permission is defined directly on the role.
     $has_permission = parent::isPermissionInRoles($permission, $rids);
 
